@@ -3,34 +3,45 @@ import { Row, Col} from 'react-bootstrap'
 import Product from '../components/Product'
 import { useDispatch, useSelector } from 'react-redux'
 import { listProducts } from '../actions/productActions'
+import Paginate from '../components/Paginate'
 import Loader from '../components/Loader'
 import Message from '../components/Message'
+import ProductCarousel from '../components/ProductCarousel'
+import { useParams , useNavigate } from 'react-router-dom'
 
 function HomeScreen() {
   const dispatch = useDispatch()
   const productList = useSelector(state => state.productList)
-  console.log("productlist:>>>", productList);
-  const {error, loading, products} = productList
+  const { error, loading, products, page, pages } = productList
+
+  console.log("products:>>  ", products);
+
+  const { keyword } = useParams()
 
   useEffect(() => {
-    dispatch(listProducts())
+    dispatch(listProducts(keyword))
 
-  }, [dispatch])
+  }, [dispatch, keyword])
 
   return (
     <div>
+        {!keyword && <ProductCarousel />}
+
         <h1>Latest Products</h1>
         {loading ? <Loader />
-          : error ? <Message variant='danger'>{error}</Message> 
-          : <Row>
-                {products.map(product => (
-                    <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
-                        <Product product={product} />
-                    </Col>
-                ))}
-            </Row> 
-      }
-        
+            : error ? <Message variant='danger'>{error}</Message>
+                :
+                <div>
+                    <Row>
+                        {products.products.map(product => (
+                            <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
+                                <Product product={product} />
+                            </Col>
+                        ))}
+                    </Row>
+                    <Paginate page={page} pages={pages} keyword={keyword} />
+                </div>
+        }
     </div>
   )
 }

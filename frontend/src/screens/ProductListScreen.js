@@ -38,6 +38,7 @@ function ProductListScreen() {
         }
 
         if (successCreate) {
+            console.log("move to edit page");
             navigate(`/admin/product/${createdProduct._id}/edit`)
         } else {
             dispatch(listProducts(keyword))
